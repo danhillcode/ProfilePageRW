@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="Student gamification profile - Track revision progress with XP, streaks, and achievements" />
+  <title>Dan's Profile - ReviseWell Gamification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      color: #e5e7eb;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 16px 48px;
+    }
+
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .avatar {
+      display: flex;
+      justify-content: center;
+    }
+
+    .avatar-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 9999px;
+      background: conic-gradient(
+        from 160deg,
+        #22c55e,
+        #22d3ee,
+        #a855f7,
+        #22c55e
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f9fafb;
+      font-size: 48px;
+      font-weight: 700;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.7);
+    }
+
+    .profile-text .username {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    .tagline {
+      margin: 8px 0 4px;
+      font-size: 14px;
+      color: #a5b4fc;
+    }
+
+    .level-line {
+      margin: 0;
+      font-size: 14px;
+      color: #bbf7d0;
+    }
+
+    .dot {
+      margin: 0 4px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 16px;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      padding: 16px 18px 18px;
+      box-shadow: 0 0 24px rgba(15, 23, 42, 0.9);
+    }
+
+    .feature-card h2 {
+      margin: 0 0 4px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6ee7b7;
+    }
+
+    .value {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .subtitle {
+      margin: 8px 0 10px;
+      font-size: 13px;
+      color: #c4b5fd;
+    }
+
+    .progress-bar {
+      position: relative;
+      width: 100%;
+      height: 8px;
+      border-radius: 9999px;
+      background-color: #020617;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      border-radius: 9999px;
+    }
+
+    .progress.xp {
+      background: linear-gradient(to right, #22c55e, #bef264);
+    }
+
+    .progress.streak {
+      background: linear-gradient(to right, #22c55e, #0ea5e9);
+    }
+
+    .progress.time {
+      background: linear-gradient(to right, #f97316, #eab308);
+    }
+
+    .progress.sessions {
+      background: linear-gradient(to right, #8b5cf6, #ec4899);
+    }
+
+    /* Course Progress Section */
+    .course-progress {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(52, 211, 153, 0.4);
+    }
+
+    .course-progress h2 {
+      text-align: center;
+      margin: 0 0 24px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6ee7b7;
+    }
+
+    .units-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .unit-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 12px;
+      padding: 16px;
+      border-left: 4px solid;
+      transition: all 0.3s;
+    }
+
+    .unit-card.unit-green {
+      border-left-color: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+    }
+
+    .unit-card.unit-orange {
+      border-left-color: #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+    }
+
+    .unit-card.unit-red {
+      border-left-color: #ef4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+    }
+
+    .unit-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .unit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .unit-header h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .unit-progress-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #a5b4fc;
+    }
+
+    .unit-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .unit-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .unit-card.unit-green .unit-progress-fill {
+      background: linear-gradient(to right, #10b981, #22c55e);
+    }
+
+    .unit-card.unit-orange .unit-progress-fill {
+      background: linear-gradient(to right, #f97316, #f59e0b);
+    }
+
+    .unit-card.unit-red .unit-progress-fill {
+      background: linear-gradient(to right, #dc2626, #ef4444);
+    }
+
+    /* Power-Ups Section */
+    .power-ups {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(52, 211, 153, 0.4);
+    }
+
+    .power-ups h2 {
+      text-align: center;
+      margin: 0 0 20px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6ee7b7;
+    }
+
+    .power-ups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .power-up-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 12px;
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .power-up-card:hover {
+      border-color: rgba(168, 85, 247, 0.8);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .power-up-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .power-up-card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .power-up-card p {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: #a5b4fc;
+    }
+
+    .power-up-cost {
+      background: rgba(168, 85, 247, 0.2);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      color: #d8b4fe;
+    }
+
+    /* Marketplace */
+    .marketplace {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(52, 211, 153, 0.4);
+    }
+
+    .marketplace h2 {
+      text-align: center;
+      margin: 0 0 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #6ee7b7;
+    }
+
+    .marketplace-intro {
+      text-align: center;
+      margin: 0 0 24px;
+      font-size: 14px;
+      color: #c4b5fd;
+    }
+
+    .prizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .prize-card {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 16px;
+      border: 2px solid rgba(147, 51, 234, 0.5);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 24px rgba(15, 23, 42, 0.9);
+      transition: all 0.3s;
+    }
+
+    .prize-card:hover {
+      border-color: rgba(168, 85, 247, 0.8);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+      transform: translateY(-4px);
+    }
+
+    .prize-emoji {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .prize-name {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .prize-description {
+      margin: 0 0 12px;
+      font-size: 13px;
+      color: #a5b4fc;
+    }
+
+    .prize-cost {
+      margin: 0 0 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+      padding: 6px 12px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #bbf7d0;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 768px) {
+      .profile-header {
+        margin-bottom: 40px;
+      }
+
+      .profile-text .username {
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        padding: 16px 12px 32px;
+      }
+
+      .prize-card,
+      .power-up-card {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <!-- Profile Header -->
+    <header class="profile-header">
+      <div class="avatar">
+        <div class="avatar-circle">S</div>
+      </div>
+      <div class="profile-text">
+        <h1 class="username">Student</h1>
+        <p class="tagline">
+          Track your revision progress and keep your streak alive.
+        </p>
+        <p class="level-line">
+          Level 4
+          <span class="dot">•</span>
+          320 XP total
+        </p>
+      </div>
+    </header>
+
+    <!-- Feature Cards -->
+    <section class="features">
+      <article class="feature-card">
+        <h2>Revision XP</h2>
+        <p class="value">320 XP</p>
+        <p class="subtitle">
+          Only 80 XP until Level 5.
+        </p>
+        <div class="progress-bar">
+          <div class="progress xp" style="width: 20%;"></div>
+        </div>
+      </article>
+
+      <article class="feature-card">
+        <h2>Daily Streak</h2>
+        <p class="value">5 days</p>
+        <p class="subtitle">
+          Aim for a 7-day streak. Even 10 minutes counts.
+        </p>
+        <div class="progress-bar">
+          <div class="progress streak" style="width: 71%;"></div>
+        </div>
+      </article>
+
+      <article class="feature-card">
+        <h2>Study Time</h2>
+        <p class="value">45 min</p>
+        <p class="subtitle">
+          Focused time from recent practice. Small chunks add up fast.
+        </p>
+        <div class="progress-bar">
+          <div class="progress time" style="width: 15%;"></div>
+        </div>
+      </article>
+
+      <article class="feature-card">
+        <h2>Revision Sessions</h2>
+        <p class="value">7</p>
+        <p class="subtitle">
+          Each serious attempt at questions or flashcards counts as a session.
+        </p>
+        <div class="progress-bar">
+          <div class="progress sessions" style="width: 41%;"></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Course Progress Section -->
+    <section class="course-progress">
+      <h2>Course Units Progress</h2>
+      <div class="units-grid">
+        <div class="unit-card unit-orange">
+          <div class="unit-header">
+            <h3>Unit 1: Foundations</h3>
+            <span class="unit-progress-text">65%</span>
+          </div>
+          <div class="unit-progress-bar">
+            <div class="unit-progress-fill" style="width: 65%;"></div>
+          </div>
+        </div>
+
+        <div class="unit-card unit-red">
+          <div class="unit-header">
+            <h3>Unit 2: Advanced</h3>
+            <span class="unit-progress-text">45%</span>
+          </div>
+          <div class="unit-progress-bar">
+            <div class="unit-progress-fill" style="width: 45%;"></div>
+          </div>
+        </div>
+
+        <div class="unit-card unit-green">
+          <div class="unit-header">
+            <h3>Unit 3: Mastery</h3>
+            <span class="unit-progress-text">85%</span>
+          </div>
+          <div class="unit-progress-bar">
+            <div class="unit-progress-fill" style="width: 85%;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Power-Ups Section -->
+    <section class="power-ups">
+      <h2>⚡ Power-Ups</h2>
+      <div class="power-ups-grid">
+        <div class="power-up-card">
+          <div class="power-up-icon">⚡</div>
+          <h3>2x XP Boost</h3>
+          <p>Double your XP for 1 hour</p>
+          <p class="power-up-cost">150 XP</p>
+        </div>
+        <div class="power-up-card">
+          <div class="power-up-icon">🛡️</div>
+          <h3>Streak Shield</h3>
+          <p>Protect your streak for 24h</p>
+          <p class="power-up-cost">100 XP</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prize Marketplace -->
+    <section class="marketplace">
+      <h2>Prize Marketplace</h2>
+      <p class="marketplace-intro">Spend your XP on amazing rewards!</p>
+      <div class="prizes-grid">
+        <div class="prize-card">
+          <div class="prize-emoji">🎮</div>
+          <h3 class="prize-name">Game Token</h3>
+          <p class="prize-description">In-game currency for multiplayer rewards</p>
+          <p class="prize-cost">2000 XP</p>
+          <p class="status-badge">🔒 Locked</p>
+        </div>
+
+        <div class="prize-card">
+          <div class="prize-emoji">📚</div>
+          <h3 class="prize-name">Study Guide</h3>
+          <p class="prize-description">Premium subject revision guide</p>
+          <p class="prize-cost">750 XP</p>
+          <p class="status-badge">🔒 Locked</p>
+        </div>
+
+        <div class="prize-card">
+          <div class="prize-emoji">⭐</div>
+          <h3 class="prize-name">Profile Badge</h3>
+          <p class="prize-description">Exclusive achievement badge</p>
+          <p class="prize-cost">500 XP</p>
+          <p class="status-badge">🔒 Locked</p>
+        </div>
+
+        <div class="prize-card">
+          <div class="prize-emoji">☕</div>
+          <h3 class="prize-name">Coffee Break</h3>
+          <p class="prize-description">5 minute relaxation reward</p>
+          <p class="prize-cost">200 XP</p>
+          <p class="status-badge">✅ Available</p>
+        </div>
+
+        <div class="prize-card">
+          <div class="prize-emoji">🎵</div>
+          <h3 class="prize-name">Playlist Pass</h3>
+          <p class="prize-description">Study music playlist access</p>
+          <p class="prize-cost">300 XP</p>
+          <p class="status-badge">✅ Available</p>
+        </div>
+
+        <div class="prize-card">
+          <div class="prize-emoji">🏅</div>
+          <h3 class="prize-name">Streak Medal</h3>
+          <p class="prize-description">Celebrate your consistency</p>
+          <p class="prize-cost">100 XP</p>
+          <p class="status-badge">✅ Available</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
