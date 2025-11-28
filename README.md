@@ -11,7 +11,7 @@ cd /Users/dhill/Desktop/Profile_Draft
 ```
 
 ### 2. **Open in Browser**
-Navigate to: **http://localhost:5000/profile**
+Navigate to: **http://localhost:5000/**
 
 ### 3. **Explore Features**
 See **QUICK_START.md** for interactive walkthroughs
